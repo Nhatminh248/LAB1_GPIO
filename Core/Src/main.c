@@ -73,19 +73,33 @@ void setLightsV (GPIO_PinState R, GPIO_PinState Y, GPIO_PinState G) {
 }
 int inter_state = 0;
 int timer = 5;
-void ex3() {
-	switch (inter_state) {
-		case 0:
-			setLights(RESET, SET, SET);
-			if (timer > 2) { setLightsV (SET, SET, RESET);} else { setLightsV(SET, RESET, SET); }
-			if (--timer <= 0) { inter_state = 1; timer = 5; }
-			break;
-		case 1:
-			setLightsV(RESET, SET, SET);
-			if (timer > 2) { setLights(SET, SET, RESET); } else { setLights (SET, RESET, SET);}
-			if (--timer <= 0) { inter_state = 0; timer = 5; }
-			break;
-		}
+const uint8_t segTable[10][7] = {
+    {1,1,1,1,1,1,0}, // 0
+    {0,1,1,0,0,0,0}, // 1
+    {1,1,0,1,1,0,1}, // 2
+    {1,1,1,1,0,0,1}, // 3
+    {0,1,1,0,0,1,1}, // 4
+    {1,0,1,1,0,1,1}, // 5
+    {1,0,1,1,1,1,1}, // 6
+    {1,1,1,0,0,0,0}, // 7
+    {1,1,1,1,1,1,1}, // 8
+    {1,1,1,1,0,1,1}  // 9
+};
+
+void display7SEG(int num) {
+    HAL_GPIO_WritePin(SEG_A_GPIO_Port, SEG_A_Pin, segTable[num][0] ? GPIO_PIN_RESET : GPIO_PIN_SET);
+    HAL_GPIO_WritePin(SEG_B_GPIO_Port, SEG_B_Pin, segTable[num][1] ? GPIO_PIN_RESET : GPIO_PIN_SET);
+    HAL_GPIO_WritePin(SEG_C_GPIO_Port, SEG_C_Pin, segTable[num][2] ? GPIO_PIN_RESET : GPIO_PIN_SET);
+    HAL_GPIO_WritePin(SEG_D_GPIO_Port, SEG_D_Pin, segTable[num][3] ? GPIO_PIN_RESET : GPIO_PIN_SET);
+    HAL_GPIO_WritePin(SEG_E_GPIO_Port, SEG_E_Pin, segTable[num][4] ? GPIO_PIN_RESET : GPIO_PIN_SET);
+    HAL_GPIO_WritePin(SEG_F_GPIO_Port, SEG_F_Pin, segTable[num][5] ? GPIO_PIN_RESET : GPIO_PIN_SET);
+    HAL_GPIO_WritePin(SEG_G_GPIO_Port, SEG_G_Pin, segTable[num][6] ? GPIO_PIN_RESET : GPIO_PIN_SET);
+}
+
+int counter = 0;
+void ex4() {
+	if (counter >=10) counter = 0;
+	display7SEG(counter++);
 }
 /* USER CODE END 0 */
 
@@ -128,7 +142,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  ex3();
+	  ex4();
 	  HAL_Delay(1000);
 
   }
