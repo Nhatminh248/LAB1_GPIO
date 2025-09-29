@@ -78,56 +78,7 @@ void turnAllClock() {
 		HAL_GPIO_WritePin(LEDS[num].port, LEDS[num].pin, GPIO_PIN_RESET);
 	}
 }
-void clearAllClock() {
-    for (int i = 0; i < 12; i++) {
-        HAL_GPIO_WritePin(LEDS[i].port, LEDS[i].pin, GPIO_PIN_SET);
-    }
-}
-void setNumberOnClock(int num) {
-    HAL_GPIO_WritePin(LEDS[num].port, LEDS[num].pin, GPIO_PIN_RESET);
-}
-void clearNumberOnClock (int num) {
-	 HAL_GPIO_WritePin(LEDS[num].port, LEDS[num].pin, GPIO_PIN_SET);
-}
-void displayTime (int hr, int min, int sec) {
-    static int prev_hr  = -1;
-    static int prev_min = -1;
-    static int prev_sec = -1;
 
-    int sec_idx = sec / 5;
-    int min_idx = min / 5;
-    int hr_idx  = hr % 12;
-
-    if (prev_hr  != -1 && prev_hr  != hr_idx)  clearNumberOnClock(prev_hr);
-    if (prev_min != -1 && prev_min != min_idx) clearNumberOnClock(prev_min);
-    if (prev_sec != -1 && prev_sec != sec_idx) clearNumberOnClock(prev_sec);
-
-    setNumberOnClock(hr_idx);
-    setNumberOnClock(min_idx);
-    setNumberOnClock(sec_idx);
-
-    prev_hr  = hr_idx;
-    prev_min = min_idx;
-    prev_sec = sec_idx;
-}
-void clock () {
-	static int hr = 0;
-	static int min = 0;
-	static int sec = 5;
-	displayTime(hr, min, sec);
-	sec++;
-	if (sec >=60) {
-		sec = 0;
-		min++;
-		if (min >= 60) {
-			min = 0;
-			hr++;
-			if (hr >= 12) {
-				hr = 0;
-			}
-		}
-	}
-}
 /* USER CODE END 0 */
 
 /**
