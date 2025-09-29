@@ -54,12 +54,26 @@ static void MX_GPIO_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void ex1() {
-	HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
-	HAL_Delay(2000);
-	HAL_GPIO_TogglePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin);
-}
+lightState state = st_red;
+int timer = 5;
+void ex2() {
+	switch (state) {
+	case st_red:
+		setLights(RESET, SET, SET);
+		if (--timer <= 0) { state = st_green; timer = 2; }
+		break;
 
+	case st_green:
+		setLights(SET, SET, RESET);
+		if (--timer <= 0) { state = st_yellow;  timer = 3; }
+		break;
+
+	case st_yellow:
+		setLights(SET, RESET, SET);
+		if (--timer <= 0) { state = st_red;    timer = 5; }
+		break;
+	}
+}
 /* USER CODE END 0 */
 
 /**
@@ -101,7 +115,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  ex1();
+	  ex2();
 	  HAL_Delay(1000);
 
   }
