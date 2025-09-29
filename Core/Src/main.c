@@ -54,6 +54,16 @@ static void MX_GPIO_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+typedef enum {
+	st_red,
+	st_green,
+	st_yellow
+} lightState;
+void setLights (GPIO_PinState R, GPIO_PinState Y, GPIO_PinState G) {
+	HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, R);
+	HAL_GPIO_WritePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin, Y);
+	HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, G);
+}
 lightState state = st_red;
 int timer = 5;
 void ex2() {
