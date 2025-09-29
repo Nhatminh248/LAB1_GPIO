@@ -66,23 +66,26 @@ void setLights (GPIO_PinState R, GPIO_PinState Y, GPIO_PinState G) {
 }
 lightState state = st_red;
 int timer = 5;
-void ex2() {
-	switch (state) {
-	case st_red:
-		setLights(RESET, SET, SET);
-		if (--timer <= 0) { state = st_green; timer = 2; }
-		break;
-
-	case st_green:
-		setLights(SET, SET, RESET);
-		if (--timer <= 0) { state = st_yellow;  timer = 3; }
-		break;
-
-	case st_yellow:
-		setLights(SET, RESET, SET);
-		if (--timer <= 0) { state = st_red;    timer = 5; }
-		break;
-	}
+void setLightsV (GPIO_PinState R, GPIO_PinState Y, GPIO_PinState G) {
+	HAL_GPIO_WritePin(LED_RED_V_GPIO_Port, LED_RED_V_Pin, R);
+	HAL_GPIO_WritePin(LED_YELLOW_V_GPIO_Port, LED_YELLOW_V_Pin, Y);
+	HAL_GPIO_WritePin(LED_GREEN_V_GPIO_Port, LED_GREEN_V_Pin, G);
+}
+int inter_state = 0;
+int timer = 5;
+void ex3() {
+	switch (inter_state) {
+		case 0:
+			setLights(RESET, SET, SET);
+			if (timer > 2) { setLightsV (SET, SET, RESET);} else { setLightsV(SET, RESET, SET); }
+			if (--timer <= 0) { inter_state = 1; timer = 5; }
+			break;
+		case 1:
+			setLightsV(RESET, SET, SET);
+			if (timer > 2) { setLights(SET, SET, RESET); } else { setLights (SET, RESET, SET);}
+			if (--timer <= 0) { inter_state = 0; timer = 5; }
+			break;
+		}
 }
 /* USER CODE END 0 */
 
@@ -125,7 +128,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  ex2();
+	  ex3();
 	  HAL_Delay(1000);
 
   }
