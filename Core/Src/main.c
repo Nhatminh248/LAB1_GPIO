@@ -97,9 +97,56 @@ void display7SEG(int num) {
 }
 
 int counter = 0;
-void ex4() {
-	if (counter >=10) counter = 0;
-	display7SEG(counter++);
+
+void display7SEGV(int num) {
+    HAL_GPIO_WritePin(SEG_AV_GPIO_Port, SEG_AV_Pin, segTable[num][0] ? GPIO_PIN_RESET : GPIO_PIN_SET);
+    HAL_GPIO_WritePin(SEG_BV_GPIO_Port, SEG_BV_Pin, segTable[num][1] ? GPIO_PIN_RESET : GPIO_PIN_SET);
+    HAL_GPIO_WritePin(SEG_CV_GPIO_Port, SEG_CV_Pin, segTable[num][2] ? GPIO_PIN_RESET : GPIO_PIN_SET);
+    HAL_GPIO_WritePin(SEG_DV_GPIO_Port, SEG_DV_Pin, segTable[num][3] ? GPIO_PIN_RESET : GPIO_PIN_SET);
+    HAL_GPIO_WritePin(SEG_EV_GPIO_Port, SEG_EV_Pin, segTable[num][4] ? GPIO_PIN_RESET : GPIO_PIN_SET);
+    HAL_GPIO_WritePin(SEG_FV_GPIO_Port, SEG_FV_Pin, segTable[num][5] ? GPIO_PIN_RESET : GPIO_PIN_SET);
+    HAL_GPIO_WritePin(SEG_GV_GPIO_Port, SEG_GV_Pin, segTable[num][6] ? GPIO_PIN_RESET : GPIO_PIN_SET);
+}
+
+void showCounter () {
+	int digitV = 0;
+	int digitH = 0;
+
+	if (inter_state == 0) {
+		digitH = timer;
+		if (timer > 2) {
+			digitV = timer - 2;
+		} else {
+			digitV = timer;
+		}
+	} else {
+		digitV = timer;
+		if (timer > 2) {
+			digitH = timer - 2;
+		} else {
+			digitH = timer;
+		}
+	}
+
+	display7SEG(digitH);
+	display7SEGV(digitV);
+}
+
+void ex5() {
+	switch (inter_state) {
+		case 0:
+			showCounter();
+			setLights(RESET, SET, SET);
+			if (timer > 2) { setLightsV (SET, SET, RESET);} else { setLightsV(SET, RESET, SET); }
+			if (--timer <= 0) { inter_state = 1; timer = 5; }
+			break;
+		case 1:
+			showCounter();
+			setLightsV(RESET, SET, SET);
+			if (timer > 2) { setLights(SET, SET, RESET); } else { setLights (SET, RESET, SET);}
+			if (--timer <= 0) { inter_state = 0; timer = 5; }
+			break;
+		}
 }
 /* USER CODE END 0 */
 
@@ -142,7 +189,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  ex4();
+	  ex5();
 	  HAL_Delay(1000);
 
   }
